@@ -15,5 +15,10 @@ class Carta {
         this.visible = visible;
     }
 
+    hola(){
+        console.log('hola');
+    }
+
 }
 
+export default Carta;

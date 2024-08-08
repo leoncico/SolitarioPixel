@@ -1,0 +1,47 @@
+body {
+    background-color:rgb(95, 114, 138);
+}
+
+#tableroSup {
+    display:flex;
+    margin-bottom: 2%;
+}
+
+.pilaInicial{
+    margin-right: 1%;
+    margin-bottom: 0%;
+    padding: 0%;
+    width: 71px;
+    height: 96px;
+    border-radius: 8px;
+    position: relative;
+}
+
+.pilaInicial img {
+    position: absolute;
+}
+
+.pilaRobo {
+    border: 3px solid black;
+    width: 71px;
+    height: 96px;
+    border-radius: 8px;
+    margin-right: 20%;
+}
+
+.pilaGanada {
+    border: 3px solid black;
+    width: 80px;
+    height: 96px;
+}
+
+
+img {
+    border: 3px solid black;
+    border-radius: 8px;
+}
+
+
+#tableroInf {
+    position: relative;
+}
