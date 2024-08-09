@@ -38,7 +38,7 @@ class Solitario {
     }
 
     agregarEventos() {
-        $('.pilaRobo').on('click', () => this.tablero.manejarRobo());
+        $('.pilaInicial').on('click', () => this.tablero.manejarRobo());
 
         $('.pilaJugable, .pilaGanada').on('dragover', function (event) {
             event.preventDefault();
@@ -61,6 +61,7 @@ class Solitario {
         let destino = $(destinoElemento);
 
         if (this.tablero.puedeMover(carta[0], destino[0])) {
+            
             destino.append(carta);
             carta.css({
                 position: 'absolute', // Cambiar a 'absolute' para que la carta se mueva sobre el contenedor
@@ -176,6 +177,8 @@ class Tablero {
         let destino = $(destinoElemento);
         let cartaID = carta.attr('id');
         let destinoID = destino.attr('id');
+
+        console.log(cartaID+destinoID);
 
         if (destinoID.startsWith('pilaJugable')) {
             let index = parseInt(destinoID.replace('pilaJugable', ''), 10);

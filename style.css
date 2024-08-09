@@ -29,6 +29,10 @@ body {
     margin-right: 20%;
 }
 
+.pilaRobo img {
+    position: absolute;
+}
+
 .pilaGanada {
     border: 3px solid black;
     width: 80px;
