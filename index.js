@@ -40,12 +40,17 @@ class Solitario {
     agregarEventos() {
         $('.pilaInicial').on('click', () => this.tablero.manejarRobo());
 
+
+        $('.pilaJugable img, .pilaGanada img, .pilaRobo img').on('dragstart', function (event) {
+            event.originalEvent.dataTransfer.setData('text', event.target.id);
+        });
+
         $('.pilaJugable, .pilaGanada').on('dragover', function (event) {
             event.preventDefault();
         });
 
-        $('.pilaJugable img, .pilaGanada img').on('dragstart', function (event) {
-            event.originalEvent.dataTransfer.setData('text', event.target.id);
+        $('.pilaJugable, .pilaGanada').on('dragenter', function (event) {
+            event.preventDefault();
         });
 
         $('.pilaJugable, .pilaGanada').on('drop', (event) => {
@@ -60,19 +65,32 @@ class Solitario {
         let carta = $(cartaElemento);
         let destino = $(destinoElemento);
 
-        if (this.tablero.puedeMover(carta[0], destino[0])) {
-            
-            destino.append(carta);
+        
+        let padre = destinoElemento.parentElement;
+
+        console.log(carta, destino);
+
+        padre.append(carta);
             carta.css({
-                position: 'absolute', // Cambiar a 'absolute' para que la carta se mueva sobre el contenedor
-                top: '0',
-                left: '0'
+                position: 'relative',
+                top: '50',
+                left: '50'
             });
-            this.tablero.actualizarPuntaje(10);
-            this.tablero.verificarGanado();
-        } else {
-            console.log("Movimiento no válido.");
-        }
+
+
+        // if (this.tablero.puedeMover(carta[0], destino[0])) {
+        //     destino.append(carta);
+        //     carta.css({
+        //         position: 'relative', // Cambiar a 'absolute' para que la carta se mueva sobre el contenedor
+        //         top: '50',
+        //         left: '50'
+        //     });
+        //     this.tablero.actualizarPuntaje(10);
+        //     this.tablero.verificarGanado();
+            
+        // } else {
+        //     console.log("Movimiento no válido.");
+        // }
     }
 }
 
