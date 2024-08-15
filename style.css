@@ -45,7 +45,110 @@ img {
     border-radius: 8px;
 }
 
+.claseCarta {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%; /* Ajusta el tamaño de las imágenes */
+    height: auto; /* Mantiene la proporción de las imágenes */
+    transform: translateY(calc(var(--index) * 20px)); /* Ajusta la distancia entre imágenes */
+    z-index: var(--index); /* Controla la superposición de las imágenes */
+}
 
 #tableroInf {
-    position: relative;
+    display: grid;
+    grid-template-columns: repeat(7,1fr);
+    gap: 10px;
+    
 }
+
+.prueba {
+    border: 5px solid red;
+}
+
+.pilaJugable {
+    border: 5px solid blue;
+    position: relative;
+    height: 700px;
+}
+
+.stack-container {
+    position: relative;
+    width: 200px; /* Ajusta el ancho según el tamaño de las imágenes */
+    height: 300px; /* Ajusta la altura según el tamaño de las imágenes */
+  }
+   
+  .stacked-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%; /* Ajusta el tamaño de las imágenes */
+    height: auto; /* Mantiene la proporción de las imágenes */
+    transform: translateY(calc(var(--index) * 20px)); /* Ajusta la distancia entre imágenes */
+    z-index: var(--index); /* Controla la superposición de las imágenes */
+  }
+   
+  .claseCarta:nth-child(1) {
+    --index: 1;
+  }
+   
+  .claseCarta:nth-child(2) {
+    --index: 2;
+  }
+   
+  .claseCarta:nth-child(3) {
+    --index: 3;
+  }
+
+  .claseCarta:nth-child(4) {
+    --index: 4;
+  }
+  .claseCarta:nth-child(5) {
+    --index: 5;
+  }
+  .claseCarta:nth-child(6) {
+    --index: 6;
+  }
+  .claseCarta:nth-child(7) {
+    --index: 7;
+  }
+
+  .claseCarta:nth-child(8) {
+    --index: 8;
+  }
+  .claseCarta:nth-child(9) {
+    --index: 9;
+  }
+  .claseCarta:nth-child(10) {
+    --index: 10;
+  }
+  .claseCarta:nth-child(11) {
+    --index: 11;
+  }
+  .claseCarta:nth-child(12) {
+    --index: 12;
+  }
+  .claseCarta:nth-child(13) {
+    --index: 13;
+  }
+  .claseCarta:nth-child(14) {
+    --index: 14;
+  }
+  .claseCarta:nth-child(15) {
+    --index: 15;
+  }
+  .claseCarta:nth-child(16) {
+    --index: 16;
+  }
+  .claseCarta:nth-child(17) {
+    --index: 17;
+  }
+  .claseCarta:nth-child(18) {
+    --index: 18;
+  }
+  .claseCarta:nth-child(19) {
+    --index: 19;
+  }
+  .claseCarta:nth-child(20) {
+    --index: 20;
+  }

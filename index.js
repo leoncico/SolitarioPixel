@@ -30,6 +30,8 @@ class Solitario {
         this.tablero.mezclarMazo();
         this.tablero.ubicarMazo();
         this.agregarEventos();
+
+        //this.tablero.aplicarEventos();
     }
 
     actualizarPuntaje(puntos) {
@@ -41,7 +43,7 @@ class Solitario {
         $('.pilaInicial').on('click', () => this.tablero.manejarRobo());
 
 
-        $('.pilaJugable img, .pilaGanada img, .pilaRobo img').on('dragstart', function (event) {
+        $('.pilaJugable img, .pilaGanada img').on('dragstart', function (event) {
             event.originalEvent.dataTransfer.setData('text', event.target.id);
         });
 
@@ -50,32 +52,57 @@ class Solitario {
         });
 
         $('.pilaJugable, .pilaGanada').on('dragenter', function (event) {
+            $(this).addClass("prueba");
             event.preventDefault();
         });
 
         $('.pilaJugable, .pilaGanada').on('drop', (event) => {
-            event.preventDefault();
-            let id = event.originalEvent.dataTransfer.getData('text');
-            let cartaElemento = document.getElementById(id);
-            this.moverCarta(cartaElemento, event.target);
+            if($(event.target).hasClass('pilaJugable')){
+                event.preventDefault();
+                let id = event.originalEvent.dataTransfer.getData('text');
+                this.moverCarta(id, event.target);
+            }
+            else if($(event.target).hasClass('claseCarta')){
+                event.preventDefault();
+                let id = event.originalEvent.dataTransfer.getData('text');
+                this.moverCarta(id, event.target.parentElement);
+            }
         });
     }
 
-    moverCarta(cartaElemento, destinoElemento) {
-        let carta = $(cartaElemento);
-        let destino = $(destinoElemento);
-
+    moverCarta(idCartaOrigen, destinoElemento) {
+        let carta = document.getElementById(idCartaOrigen);
+        let infoCarta = idCartaOrigen.split("-");
+        let pila = infoCarta[2];
+        let posicionCarta = parseInt(infoCarta[3]);
+        let nuevaPosicion = destinoElemento.childElementCount;
+        let nuevaPila = destinoElemento.id.split("-")[1];
         
-        let padre = destinoElemento.parentElement;
+        
+        carta.id = "carta-jugable-" + nuevaPila + "-" + nuevaPosicion;
+        destinoElemento.append(carta);
+        
+        posicionCarta += 1;
+        nuevaPosicion += 1;
+        let siguienteCarta = document.getElementById("carta-jugable-" + pila + "-" + posicionCarta);
 
-        console.log(carta, destino);
-
-        padre.append(carta);
-            carta.css({
-                position: 'relative',
-                top: '50',
-                left: '50'
-            });
+        console.log("carta-jugable-" + pila + "-" + posicionCarta);
+        
+        while(siguienteCarta){
+            siguienteCarta.id = "carta-jugable-" + nuevaPila + "-" + nuevaPosicion;
+            destinoElemento.append(siguienteCarta);
+            posicionCarta += 1;
+            nuevaPosicion += 1;
+            siguienteCarta = document.getElementById("carta-jugable-" + pila + "-" + posicionCarta);
+        }
+        
+        
+        
+            // carta.css({
+            //     position: 'relative',
+            //     top: '50',
+            //     left: '50'
+            // });
 
 
         // if (this.tablero.puedeMover(carta[0], destino[0])) {
@@ -92,6 +119,11 @@ class Solitario {
         //     console.log("Movimiento no válido.");
         // }
     }
+
+    moverCartaLogica(){
+
+    }
+
 }
 
 class Tablero {
@@ -154,6 +186,7 @@ class Tablero {
             carta.attr("src", this.mazo[i].imagen);
             carta.attr("id", `carta-${i}`);
             carta.attr("draggable", true);
+            carta.attr("class", 'carta')
             $('.pilaInicial').append(carta);
         }
 
@@ -164,13 +197,14 @@ class Tablero {
                 let carta = $('<img></img>');
                 carta.attr("src", pila[j].imagen);
                 carta.attr("id", `carta-jugable-${i}-${j}`);
-                carta.attr("draggable", pila[j].isVisible());
-                carta.css({
-                    position: 'absolute',
-                    top: `${j * 30}px`,
-                    left: `${i * 100}px`
-                });
-                $(`#pilaJugable${i}`).append(carta);
+                //carta.attr("draggable", pila[j].isVisible());
+                carta.attr("class", 'claseCarta');
+                // carta.css({
+                //     position: 'absolute',
+                //     top: `${j * 30}px`,
+                //     left: `${i * 100}px`
+                // });
+                $(`#pilaJugable-${i}`).append(carta);
             }
         }
     }
@@ -236,6 +270,22 @@ class Tablero {
             alert("¡Has ganado el juego!");
         }
     }
+
+
+
+    //Pruebas
+    // aplicarEventos(){
+    //     for (let i = 0; i < this.pilasJugables.length; i++) {
+    //         for (let j = 0; j < this.pilasJugables[i].length; j++) {
+    //           const carta = this.pilasJugables[i][j];
+    //           ().on('dragstart', (e) => {
+    //             // Set the data being dragged to the card's ID or other identifying information
+    //             e.originalEvent.dataTransfer.setData('text', $(carta).attr('id'));
+    //           });
+    //         }
+    //       }
+    // }
+
 }
 
 $(document).ready(function() {
