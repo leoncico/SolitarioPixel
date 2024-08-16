@@ -30,8 +30,6 @@ class Solitario {
         this.tablero.mezclarMazo();
         this.tablero.ubicarMazo();
         this.agregarEventos();
-
-        //this.tablero.aplicarEventos();
     }
 
     actualizarPuntaje(puntos) {
@@ -75,56 +73,36 @@ class Solitario {
         let infoCarta = idCartaOrigen.split("-");
         let pila = infoCarta[2];
         let posicionCarta = parseInt(infoCarta[3]);
+
         let nuevaPosicion = destinoElemento.childElementCount;
         let nuevaPila = destinoElemento.id.split("-")[1];
         
-        
-        carta.id = "carta-jugable-" + nuevaPila + "-" + nuevaPosicion;
-        destinoElemento.append(carta);
-        
-        posicionCarta += 1;
-        nuevaPosicion += 1;
-        let siguienteCarta = document.getElementById("carta-jugable-" + pila + "-" + posicionCarta);
+        if(this.tablero.puedeMover(pila, posicionCarta, nuevaPila, nuevaPosicion)){
+            let cartasArrastradas = this.tablero.pilasJugables[pila].length - posicionCarta;
+            let cartaLogica = this.tablero.pilasJugables[pila].splice(posicionCarta , cartasArrastradas);
 
-        console.log("carta-jugable-" + pila + "-" + posicionCarta);
-        
-        while(siguienteCarta){
-            siguienteCarta.id = "carta-jugable-" + nuevaPila + "-" + nuevaPosicion;
-            destinoElemento.append(siguienteCarta);
+            this.tablero.pilasJugables[nuevaPila].push(...cartaLogica);
+            carta.id = "carta-jugable-" + nuevaPila + "-" + nuevaPosicion;
+            destinoElemento.append(carta);
+            
+            this.tablero.pilasJugables[pila][posicionCarta-1].visible=true;       // ************** AUN NO SE REFLEJA EL CAMBIO DE VISIBILIDAD EN EL FRONT
+            console.log(this.tablero.pilasJugables[pila][posicionCarta-1]);
+
             posicionCarta += 1;
             nuevaPosicion += 1;
-            siguienteCarta = document.getElementById("carta-jugable-" + pila + "-" + posicionCarta);
+            let siguienteCarta = document.getElementById("carta-jugable-" + pila + "-" + posicionCarta);
+            while(siguienteCarta){
+                siguienteCarta.id = "carta-jugable-" + nuevaPila + "-" + nuevaPosicion;
+                destinoElemento.append(siguienteCarta);
+                posicionCarta += 1;
+                nuevaPosicion += 1;
+                siguienteCarta = document.getElementById("carta-jugable-" + pila + "-" + posicionCarta);
+            }
         }
-        
-        
-        
-            // carta.css({
-            //     position: 'relative',
-            //     top: '50',
-            //     left: '50'
-            // });
 
-
-        // if (this.tablero.puedeMover(carta[0], destino[0])) {
-        //     destino.append(carta);
-        //     carta.css({
-        //         position: 'relative', // Cambiar a 'absolute' para que la carta se mueva sobre el contenedor
-        //         top: '50',
-        //         left: '50'
-        //     });
-        //     this.tablero.actualizarPuntaje(10);
-        //     this.tablero.verificarGanado();
-            
-        // } else {
-        //     console.log("Movimiento no válido.");
-        // }
+        }
     }
 
-    moverCartaLogica(){
-
-    }
-
-}
 
 class Tablero {
     constructor() {
@@ -138,8 +116,8 @@ class Tablero {
         let colores = {
             trebol: "negro",
             diamante: "rojo",
-            pica: "negro",
-            corazon: "rojo"
+            corazon: "rojo",
+            pica: "negro"
         };
 
         let contImg = 1;
@@ -224,34 +202,19 @@ class Tablero {
         }
     }
 
-    puedeMover(cartaElemento, destinoElemento) {
-        let carta = $(cartaElemento);
-        let destino = $(destinoElemento);
-        let cartaID = carta.attr('id');
-        let destinoID = destino.attr('id');
+    puedeMover(pila, posicionCarta, nuevaPila, nuevaPosicion) {
+        let carta = this.pilasJugables[pila][posicionCarta];
+        let cartaDestino = this.pilasJugables[nuevaPila][nuevaPosicion - 1];
 
-        console.log(cartaID+destinoID);
+        if(this.pilasJugables[nuevaPila].length === 0 && carta.numero === 13){
+            console.log("K se puede mover xd");
+            return true;
+        }
 
-        if (destinoID.startsWith('pilaJugable')) {
-            let index = parseInt(destinoID.replace('pilaJugable', ''), 10);
-            let pila = this.pilasJugables[index];
-
-            if (pila.length === 0) {
-                return carta[0].numero === 13; // Solo el Rey puede estar en una pila vacía
-            } else {
-                let cartaSuperior = pila[pila.length - 1];
-                return this.esMovimientoValido(carta[0], cartaSuperior);
-            }
-        } else if (destinoID.startsWith('pilaGanada')) {
-            let index = parseInt(destinoID.replace('pilaGanada', ''), 10);
-            let pilaGanada = this.pilasGanadas[index];
-
-            if (pilaGanada.length === 0) {
-                return carta[0].numero === 1; // Solo el As puede estar en una pila ganada vacía
-            } else {
-                let cartaSuperior = pilaGanada[pilaGanada.length - 1];
-                return carta[0].numero === cartaSuperior.numero + 1 && carta[0].color === cartaSuperior.color;
-            }
+        
+        else if( cartaDestino.numero - carta.numero === 1 && (carta.color !== cartaDestino.color) ){
+            console.log("se puede mover por diferencia ");
+            return true;
         }
 
         return false;
