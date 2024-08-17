@@ -41,7 +41,7 @@ class Solitario {
         $('.pilaInicial').on('click', () => this.tablero.manejarRobo());
 
 
-        $('.pilaJugable img, .pilaGanada img').on('dragstart', function (event) {
+        $('.pilaJugable img, .pilaGanada img, .pilaRobo').on('dragstart', function (event) {
             event.originalEvent.dataTransfer.setData('text', event.target.id);
         });
 
@@ -50,11 +50,10 @@ class Solitario {
         });
 
         $('.pilaJugable, .pilaGanada').on('dragenter', function (event) {
-            $(this).addClass("prueba");
             event.preventDefault();
         });
 
-        $('.pilaJugable, .pilaGanada').on('drop', (event) => {
+        $('.pilaJugable').on('drop', (event) => {
             if($(event.target).hasClass('pilaJugable')){
                 event.preventDefault();
                 let id = event.originalEvent.dataTransfer.getData('text');
@@ -66,49 +65,96 @@ class Solitario {
                 this.moverCarta(id, event.target.parentElement);
             }
         });
+
+        $('.pilaGanada').on('drop', (event) => {
+            event.preventDefault();
+            let id = event.originalEvent.dataTransfer.getData('text');
+            this.moverGanadora(id, event.target);
+        });
+        
     }
 
-    moverCarta(idCartaOrigen, destinoElemento) {
+    moverGanadora(idCartaOrigen, destinoElemento){
         let carta = document.getElementById(idCartaOrigen);
+        let pilaDestino = destinoElemento.id.split("-")[1];
+        
         let infoCarta = idCartaOrigen.split("-");
         let pila = infoCarta[2];
         let posicionCarta = parseInt(infoCarta[3]);
 
-        let nuevaPosicion = destinoElemento.childElementCount;
-        let nuevaPila = destinoElemento.id.split("-")[1];
         
-        if(this.tablero.puedeMover(pila, posicionCarta, nuevaPila, nuevaPosicion)){
-            let cartasArrastradas = this.tablero.pilasJugables[pila].length - posicionCarta;
-            let cartaLogica = this.tablero.pilasJugables[pila].splice(posicionCarta , cartasArrastradas);
-
-            this.tablero.pilasJugables[nuevaPila].push(...cartaLogica);
-            carta.id = "carta-jugable-" + nuevaPila + "-" + nuevaPosicion;
-            destinoElemento.append(carta);
+        if(this.tablero.pilasGanadas[pilaDestino].length === 0){
             
-            this.tablero.pilasJugables[pila][posicionCarta-1].visible=true;       // ************** AUN NO SE REFLEJA EL CAMBIO DE VISIBILIDAD EN EL FRONT
-            console.log(this.tablero.pilasJugables[pila][posicionCarta-1]);
+        }
+    }
 
-            posicionCarta += 1;
-            nuevaPosicion += 1;
-            let siguienteCarta = document.getElementById("carta-jugable-" + pila + "-" + posicionCarta);
-            while(siguienteCarta){
-                siguienteCarta.id = "carta-jugable-" + nuevaPila + "-" + nuevaPosicion;
-                destinoElemento.append(siguienteCarta);
+    moverCarta(idCartaOrigen, destinoElemento) {
+        let carta = document.getElementById(idCartaOrigen);
+        let claseCarta = carta.className;
+
+
+        if(claseCarta === "claseCarta"){
+            let infoCarta = idCartaOrigen.split("-");
+            let pila = infoCarta[2];
+            let posicionCarta = parseInt(infoCarta[3]);
+
+            let nuevaPosicion = destinoElemento.childElementCount;
+            let nuevaPila = destinoElemento.id.split("-")[1];
+            
+            if(this.tablero.puedeMover(this.tablero.pilasJugables[pila][posicionCarta] , nuevaPila, nuevaPosicion)){
+                let cartasArrastradas = this.tablero.pilasJugables[pila].length - posicionCarta;
+                let cartaLogica = this.tablero.pilasJugables[pila].splice(posicionCarta , cartasArrastradas);
+
+                this.tablero.pilasJugables[nuevaPila].push(...cartaLogica);
+                carta.id = "carta-jugable-" + nuevaPila + "-" + nuevaPosicion;
+                destinoElemento.append(carta);
+                let cartaRevelada = this.tablero.pilasJugables[pila][posicionCarta-1];
+                cartaRevelada.setVisible(true); 
+                let idCartaRevelada = "carta-jugable-" + pila + "-" + (posicionCarta-1);
+                let cartaReveladaFront = document.getElementById(idCartaRevelada);
+                cartaReveladaFront.setAttribute("src", cartaRevelada.imagen);
+                cartaReveladaFront.setAttribute("draggable", true);
+
                 posicionCarta += 1;
                 nuevaPosicion += 1;
-                siguienteCarta = document.getElementById("carta-jugable-" + pila + "-" + posicionCarta);
+                let siguienteCarta = document.getElementById("carta-jugable-" + pila + "-" + posicionCarta);
+                while(siguienteCarta){
+                    siguienteCarta.id = "carta-jugable-" + nuevaPila + "-" + nuevaPosicion;
+                    destinoElemento.append(siguienteCarta);
+                    posicionCarta += 1;
+                    nuevaPosicion += 1;
+                    siguienteCarta = document.getElementById("carta-jugable-" + pila + "-" + posicionCarta);
+                }
             }
         }
 
+        else if(claseCarta === "claseCartaRobo"){
+            let nuevaPosicion = destinoElemento.childElementCount;
+            let nuevaPila = destinoElemento.id.split("-")[1];
+            
+            if(this.tablero.puedeMover(this.tablero.pilaRobo.pop(), nuevaPila, nuevaPosicion)){
+                let cartaLogica = this.tablero.pilaRobo.pop();
+                this.tablero.pilasJugables[nuevaPila].push(cartaLogica);
+                carta.id = "carta-jugable-" + nuevaPila + "-" + nuevaPosicion;
+                carta.classList.remove('claseCartaRobo');
+                carta.className = "claseCarta";
+                
+                destinoElemento.append(carta);
+                console.log(this.tablero.pilasJugables);
+            }
         }
+
+    
     }
+
+}
 
 
 class Tablero {
     constructor() {
         this.mazo = [];
         this.pilasJugables = [];
-        this.pilasGanadas = [[], [], [], []]; // Para las 4 pilas ganadas
+        this.pilasGanadas = [[],[],[],[]];
         this.pilaRobo = [];
     }
 
@@ -163,8 +209,8 @@ class Tablero {
             let carta = $('<img></img>');
             carta.attr("src", this.mazo[i].imagen);
             carta.attr("id", `carta-${i}`);
-            carta.attr("draggable", true);
-            carta.attr("class", 'carta')
+            carta.attr("draggable", false);
+            carta.attr("class", 'claseCartaRobo')
             $('.pilaInicial').append(carta);
         }
 
@@ -175,13 +221,8 @@ class Tablero {
                 let carta = $('<img></img>');
                 carta.attr("src", pila[j].imagen);
                 carta.attr("id", `carta-jugable-${i}-${j}`);
-                //carta.attr("draggable", pila[j].isVisible());
+                carta.attr("draggable", pila[j].isVisible());
                 carta.attr("class", 'claseCarta');
-                // carta.css({
-                //     position: 'absolute',
-                //     top: `${j * 30}px`,
-                //     left: `${i * 100}px`
-                // });
                 $(`#pilaJugable-${i}`).append(carta);
             }
         }
@@ -196,14 +237,15 @@ class Tablero {
             cartaElemento.attr("src", carta.imagen);
             cartaElemento.attr("draggable", true);
             cartaElemento.attr("id", `carta-robo-${this.pilaRobo.length - 1}`);
+            cartaElemento.attr("class", 'claseCartaRobo')
             $('.pilaRobo').append(cartaElemento);
         } else {
             console.log("No hay más cartas para robar.");
         }
     }
 
-    puedeMover(pila, posicionCarta, nuevaPila, nuevaPosicion) {
-        let carta = this.pilasJugables[pila][posicionCarta];
+    puedeMover(carta, nuevaPila, nuevaPosicion) {
+        //let carta = this.pilasJugables[pila][posicionCarta];
         let cartaDestino = this.pilasJugables[nuevaPila][nuevaPosicion - 1];
 
         if(this.pilasJugables[nuevaPila].length === 0 && carta.numero === 13){
@@ -220,6 +262,14 @@ class Tablero {
         return false;
     }
 
+    puedeMoverRobo(carta, nuevaPila, nuevaPosicion){
+        let cartaDestino = this.pilasJugables[nuevaPila][nuevaPosicion - 1];
+
+
+
+        return true;
+    }
+
     esMovimientoValido(carta, cartaSuperior) {
         // Verifica si la carta es del color alterno y tiene un valor descendente
         return carta.color !== cartaSuperior.color && carta.numero === cartaSuperior.numero - 1;
@@ -233,22 +283,6 @@ class Tablero {
             alert("¡Has ganado el juego!");
         }
     }
-
-
-
-    //Pruebas
-    // aplicarEventos(){
-    //     for (let i = 0; i < this.pilasJugables.length; i++) {
-    //         for (let j = 0; j < this.pilasJugables[i].length; j++) {
-    //           const carta = this.pilasJugables[i][j];
-    //           ().on('dragstart', (e) => {
-    //             // Set the data being dragged to the card's ID or other identifying information
-    //             e.originalEvent.dataTransfer.setData('text', $(carta).attr('id'));
-    //           });
-    //         }
-    //       }
-    // }
-
 }
 
 $(document).ready(function() {
