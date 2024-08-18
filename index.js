@@ -75,23 +75,69 @@ class Solitario {
     }
 
     moverGanadora(idCartaOrigen, destinoElemento){
-        let carta = document.getElementById(idCartaOrigen);
+
+        //Falta implementar caso si se arrastra desde la pila de robo
+
+        let cartaElemento = document.getElementById(idCartaOrigen);
         let pilaDestino = destinoElemento.id.split("-")[1];
         
         let infoCarta = idCartaOrigen.split("-");
         let pila = infoCarta[2];
         let posicionCarta = parseInt(infoCarta[3]);
 
-        
-        if(this.tablero.pilasGanadas[pilaDestino].length === 0){
-            
+        let cartaLogica = this.tablero.pilasJugables[pila][posicionCarta];
+        let pilaGanada = this.tablero.pilasGanadas[pilaDestino];
+
+        if(destinoElemento.classList.contains("pilaGanada")){
+            if(cartaLogica.numero === 1){
+                pilaGanada.push(this.tablero.pilasJugables[pila].pop());
+                cartaElemento.classList.remove('claseCarta');
+                cartaElemento.setAttribute("class", 'claseCartaGanada');
+                cartaElemento.setAttribute("id", `carta-ganada-${pilaDestino}-${cartaLogica.numero}`);
+                destinoElemento.append(cartaElemento);
+
+                if(posicionCarta !==0){
+                    let cartaRevelada = this.tablero.pilasJugables[pila][posicionCarta-1];
+                    cartaRevelada.setVisible(true); 
+                    let idCartaRevelada = "carta-jugable-" + pila + "-" + (posicionCarta-1);
+                    let cartaReveladaFront = document.getElementById(idCartaRevelada);
+                    cartaReveladaFront.setAttribute("src", cartaRevelada.imagen);
+                    cartaReveladaFront.setAttribute("draggable", true);
+                }
+            }
+
         }
+    
+        else if(destinoElemento.classList.contains("claseCartaGanada")){
+            pilaDestino = destinoElemento.id.split("-")[2];
+            let indiceUltimoElemento = this.tablero.pilasGanadas[pilaDestino].length - 1;
+            pilaGanada =  this.tablero.pilasGanadas[pilaDestino];
+
+            if(cartaLogica.numero - this.tablero.pilasGanadas[pilaDestino][indiceUltimoElemento].numero === 1 && cartaLogica.simbolo === this.tablero.pilasGanadas[pilaDestino][indiceUltimoElemento].simbolo){
+                pilaGanada.push(this.tablero.pilasJugables[pila].pop());
+                cartaElemento.classList.remove('claseCarta');
+                cartaElemento.setAttribute("class", 'claseCartaGanada');
+                cartaElemento.setAttribute("id", `carta-ganada-${pilaDestino}-${cartaLogica.numero}`);
+                destinoElemento.append(cartaElemento);
+
+                if(posicionCarta !==0){
+                    let cartaRevelada = this.tablero.pilasJugables[pila][posicionCarta-1];
+                    cartaRevelada.setVisible(true); 
+                    let idCartaRevelada = "carta-jugable-" + pila + "-" + (posicionCarta-1);
+                    let cartaReveladaFront = document.getElementById(idCartaRevelada);
+                    cartaReveladaFront.setAttribute("src", cartaRevelada.imagen);
+                    cartaReveladaFront.setAttribute("draggable", true);
+                }
+            }
+           
+        }
+
+        
     }
 
     moverCarta(idCartaOrigen, destinoElemento) {
         let carta = document.getElementById(idCartaOrigen);
         let claseCarta = carta.className;
-
 
         if(claseCarta === "claseCarta"){
             let infoCarta = idCartaOrigen.split("-");
@@ -108,13 +154,16 @@ class Solitario {
                 this.tablero.pilasJugables[nuevaPila].push(...cartaLogica);
                 carta.id = "carta-jugable-" + nuevaPila + "-" + nuevaPosicion;
                 destinoElemento.append(carta);
-                let cartaRevelada = this.tablero.pilasJugables[pila][posicionCarta-1];
-                cartaRevelada.setVisible(true); 
-                let idCartaRevelada = "carta-jugable-" + pila + "-" + (posicionCarta-1);
-                let cartaReveladaFront = document.getElementById(idCartaRevelada);
-                cartaReveladaFront.setAttribute("src", cartaRevelada.imagen);
-                cartaReveladaFront.setAttribute("draggable", true);
 
+                if(posicionCarta !==0){
+                    let cartaRevelada = this.tablero.pilasJugables[pila][posicionCarta-1];
+                    cartaRevelada.setVisible(true); 
+                    let idCartaRevelada = "carta-jugable-" + pila + "-" + (posicionCarta-1);
+                    let cartaReveladaFront = document.getElementById(idCartaRevelada);
+                    cartaReveladaFront.setAttribute("src", cartaRevelada.imagen);
+                    cartaReveladaFront.setAttribute("draggable", true);
+                }
+                
                 posicionCarta += 1;
                 nuevaPosicion += 1;
                 let siguienteCarta = document.getElementById("carta-jugable-" + pila + "-" + posicionCarta);
@@ -132,6 +181,7 @@ class Solitario {
             let nuevaPosicion = destinoElemento.childElementCount;
             let nuevaPila = destinoElemento.id.split("-")[1];
             
+            // ************** BUG EN ROBO Y ACA POR EL METODO POP ******************************
             if(this.tablero.puedeMover(this.tablero.pilaRobo.pop(), nuevaPila, nuevaPosicion)){
                 let cartaLogica = this.tablero.pilaRobo.pop();
                 this.tablero.pilasJugables[nuevaPila].push(cartaLogica);

@@ -37,6 +37,7 @@ body {
     border: 3px solid black;
     width: 80px;
     height: 96px;
+    position: relative;
 }
 
 
@@ -70,6 +71,10 @@ img {
     border: 5px solid blue;
     position: relative;
     height: 700px;
+}
+
+.claseCartaGanada {
+  position: absolute;
 }
 
 .stack-container {
