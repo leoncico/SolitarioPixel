@@ -40,9 +40,12 @@ class Solitario {
     agregarEventos() {
         $('.pilaInicial').on('click', () => this.tablero.manejarRobo());
 
-
-        $('.pilaJugable img, .pilaGanada img, .pilaRobo').on('dragstart', function (event) {
-            event.originalEvent.dataTransfer.setData('text', event.target.id);
+        $('.pilaRobo, .pilaJugable').on('dragstart', function (event) {
+            if($(event.target).hasClass('claseCartaRobo') || $(event.target).hasClass('claseCarta')){
+                console.log("Arrastrando carta con ID:", event.target.id);
+                console.log("hola");
+                event.originalEvent.dataTransfer.setData('text', event.target.id);
+            }
         });
 
         $('.pilaJugable, .pilaGanada').on('dragover', function (event) {
@@ -75,9 +78,7 @@ class Solitario {
     }
 
     moverGanadora(idCartaOrigen, destinoElemento){
-
-        //Falta implementar caso si se arrastra desde la pila de robo
-
+        // BUG CUANDO LA CARTA FUE ROBADA ANTES Y VIENE DE PILA JUGABLE SE HACE NULA LA CARTA QUE SE QUIERE MOVER
         let cartaElemento = document.getElementById(idCartaOrigen);
         let pilaDestino = destinoElemento.id.split("-")[1];
         
@@ -85,17 +86,17 @@ class Solitario {
         let pila = infoCarta[2];
         let posicionCarta = parseInt(infoCarta[3]);
 
-        let cartaLogica = this.tablero.pilasJugables[pila][posicionCarta];
         let pilaGanada = this.tablero.pilasGanadas[pilaDestino];
 
-        if(destinoElemento.classList.contains("pilaGanada")){
+        if(destinoElemento.classList.contains("pilaGanada") && cartaElemento.classList.contains("claseCarta")){
+            let cartaLogica = this.tablero.pilasJugables[pila][posicionCarta];
             if(cartaLogica.numero === 1){
                 pilaGanada.push(this.tablero.pilasJugables[pila].pop());
                 cartaElemento.classList.remove('claseCarta');
                 cartaElemento.setAttribute("class", 'claseCartaGanada');
                 cartaElemento.setAttribute("id", `carta-ganada-${pilaDestino}-${cartaLogica.numero}`);
                 destinoElemento.append(cartaElemento);
-
+                this.tablero.verificarGanado();
                 if(posicionCarta !==0){
                     let cartaRevelada = this.tablero.pilasJugables[pila][posicionCarta-1];
                     cartaRevelada.setVisible(true); 
@@ -105,10 +106,10 @@ class Solitario {
                     cartaReveladaFront.setAttribute("draggable", true);
                 }
             }
-
         }
     
-        else if(destinoElemento.classList.contains("claseCartaGanada")){
+        else if(destinoElemento.classList.contains("claseCartaGanada") && cartaElemento.classList.contains("claseCarta")){
+            let cartaLogica = this.tablero.pilasJugables[pila][posicionCarta];
             pilaDestino = destinoElemento.id.split("-")[2];
             let indiceUltimoElemento = this.tablero.pilasGanadas[pilaDestino].length - 1;
             pilaGanada =  this.tablero.pilasGanadas[pilaDestino];
@@ -118,8 +119,9 @@ class Solitario {
                 cartaElemento.classList.remove('claseCarta');
                 cartaElemento.setAttribute("class", 'claseCartaGanada');
                 cartaElemento.setAttribute("id", `carta-ganada-${pilaDestino}-${cartaLogica.numero}`);
-                destinoElemento.append(cartaElemento);
-
+                //destinoElemento.append(cartaElemento);
+                destinoElemento.parentElement.append(cartaElemento);
+                this.tablero.verificarGanado();
                 if(posicionCarta !==0){
                     let cartaRevelada = this.tablero.pilasJugables[pila][posicionCarta-1];
                     cartaRevelada.setVisible(true); 
@@ -132,6 +134,38 @@ class Solitario {
            
         }
 
+        else if(destinoElemento.classList.contains("pilaGanada") && cartaElemento.classList.contains("claseCartaRobo")){
+            let cartaLogica = this.tablero.pilaRobo[this.tablero.pilaRobo.length-1];
+            if(cartaLogica.numero === 1){
+                pilaGanada.push(this.tablero.pilaRobo.pop());
+                cartaElemento.classList.remove('claseCarta');
+                cartaElemento.setAttribute("class", 'claseCartaGanada');
+                cartaElemento.setAttribute("id", `carta-ganada-${pilaDestino}-${cartaLogica.numero}`);
+                destinoElemento.append(cartaElemento);
+            }
+
+        }
+
+        
+        else if(destinoElemento.classList.contains("claseCartaGanada") && cartaElemento.classList.contains("claseCartaRobo")){
+            let cartaLogica = this.tablero.pilaRobo[this.tablero.pilaRobo.length-1];
+            pilaDestino = destinoElemento.id.split("-")[2];
+            let indiceUltimoElemento = this.tablero.pilasGanadas[pilaDestino].length - 1;
+            pilaGanada =  this.tablero.pilasGanadas[pilaDestino];
+
+
+            if(cartaLogica.numero - this.tablero.pilasGanadas[pilaDestino][indiceUltimoElemento].numero === 1 && cartaLogica.simbolo === this.tablero.pilasGanadas[pilaDestino][indiceUltimoElemento].simbolo){
+                pilaGanada.push(this.tablero.pilaRobo.pop());
+                cartaElemento.classList.remove('claseCarta');
+                cartaElemento.setAttribute("class", 'claseCartaGanada');
+                cartaElemento.setAttribute("id", `carta-ganada-${pilaDestino}-${cartaLogica.numero}`);
+                //destinoElemento.append(cartaElemento);
+                destinoElemento.parentElement.append(cartaElemento);
+                this.tablero.verificarGanado();
+            }
+        }
+
+        
         
     }
 
@@ -175,26 +209,24 @@ class Solitario {
                     siguienteCarta = document.getElementById("carta-jugable-" + pila + "-" + posicionCarta);
                 }
             }
+            
         }
 
         else if(claseCarta === "claseCartaRobo"){
             let nuevaPosicion = destinoElemento.childElementCount;
             let nuevaPila = destinoElemento.id.split("-")[1];
+            let cartaRobo = this.tablero.pilaRobo[this.tablero.pilaRobo.length-1];
             
-            // ************** BUG EN ROBO Y ACA POR EL METODO POP ******************************
-            if(this.tablero.puedeMover(this.tablero.pilaRobo.pop(), nuevaPila, nuevaPosicion)){
+            if(this.tablero.puedeMover(cartaRobo, nuevaPila, nuevaPosicion)){
                 let cartaLogica = this.tablero.pilaRobo.pop();
                 this.tablero.pilasJugables[nuevaPila].push(cartaLogica);
                 carta.id = "carta-jugable-" + nuevaPila + "-" + nuevaPosicion;
                 carta.classList.remove('claseCartaRobo');
-                carta.className = "claseCarta";
-                
+                carta.setAttribute("class" , 'claseCarta');
                 destinoElemento.append(carta);
-                console.log(this.tablero.pilasJugables);
             }
         }
 
-    
     }
 
 }
@@ -238,7 +270,6 @@ class Tablero {
             [this.mazo[i], this.mazo[j]] = [this.mazo[j], this.mazo[i]];
         }
 
-        // Distribuir cartas en pilas jugables
         for (let i = 0; i < 7; i++) {
             let pila = [];
             for (let k = 0; k <= i; k++) {
@@ -252,19 +283,17 @@ class Tablero {
     }
 
     ubicarMazo() {
-        $('.pilaInicial').empty(); // Limpia el contenido de la pilaInicial
+        $('.pilaInicial').empty();
 
-        // Agregar cartas al área de robo
         for (let i = 0; i < this.mazo.length; i++) {
             let carta = $('<img></img>');
             carta.attr("src", this.mazo[i].imagen);
             carta.attr("id", `carta-${i}`);
             carta.attr("draggable", false);
-            carta.attr("class", 'claseCartaRobo')
+            //carta.attr("class", 'claseCartaRobo')
             $('.pilaInicial').append(carta);
         }
 
-        // Agregar cartas a las pilas jugables
         for (let i = 0; i < this.pilasJugables.length; i++) {
             let pila = this.pilasJugables[i];
             for (let j = 0; j < pila.length; j++) {
@@ -283,50 +312,51 @@ class Tablero {
             let carta = this.mazo.pop();
             carta.setVisible(true);
             this.pilaRobo.push(carta);
-            let cartaElemento = $('<img></img>');
+            let cartaElemento = $('<img>');
             cartaElemento.attr("src", carta.imagen);
             cartaElemento.attr("draggable", true);
             cartaElemento.attr("id", `carta-robo-${this.pilaRobo.length - 1}`);
             cartaElemento.attr("class", 'claseCartaRobo')
             $('.pilaRobo').append(cartaElemento);
-        } else {
-            console.log("No hay más cartas para robar.");
+        } 
+        
+        else {
+            $('.pilaRobo').empty();
+            $('.pilaInicial').empty(); 
+            this.mazo = this.pilaRobo.reverse().slice();
+            this.pilaRobo = []; 
+            for (let i = 0; i < this.mazo.length; i++) {
+                let carta = $('<img></img>');
+                carta.attr("src", this.mazo[i].imagenAtras);
+                carta.attr("id", `carta-${i}`);
+                carta.attr("draggable", false);
+                carta.attr("class", 'claseCartaRobo');
+                $('.pilaInicial').append(carta);
+            }
+            console.log("Reinicio de baraja");
         }
     }
 
     puedeMover(carta, nuevaPila, nuevaPosicion) {
-        //let carta = this.pilasJugables[pila][posicionCarta];
         let cartaDestino = this.pilasJugables[nuevaPila][nuevaPosicion - 1];
+        try{
+            if(this.pilasJugables[nuevaPila].length === 0 && carta.numero === 13){
+                return true;
+            }
 
-        if(this.pilasJugables[nuevaPila].length === 0 && carta.numero === 13){
-            console.log("K se puede mover xd");
-            return true;
+            else if( cartaDestino.numero - carta.numero === 1 && (carta.color !== cartaDestino.color) ){
+                return true;
+            }
         }
-
         
-        else if( cartaDestino.numero - carta.numero === 1 && (carta.color !== cartaDestino.color) ){
-            console.log("se puede mover por diferencia ");
-            return true;
+        catch{
+            console.log("No se puede mover la carta a ese lugar");
         }
-
+        
         return false;
     }
 
-    puedeMoverRobo(carta, nuevaPila, nuevaPosicion){
-        let cartaDestino = this.pilasJugables[nuevaPila][nuevaPosicion - 1];
-
-
-
-        return true;
-    }
-
-    esMovimientoValido(carta, cartaSuperior) {
-        // Verifica si la carta es del color alterno y tiene un valor descendente
-        return carta.color !== cartaSuperior.color && carta.numero === cartaSuperior.numero - 1;
-    }
-
     verificarGanado() {
-        // Verifica si el juego ha sido ganado (por ejemplo, si todas las cartas están en las pilas ganadas)
         let cartasEnGanadas = this.pilasGanadas.flat().length;
         if (cartasEnGanadas === 52) {
             console.log("¡Has ganado el juego!");

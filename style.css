@@ -23,8 +23,8 @@ body {
 
 .pilaRobo {
     border: 3px solid black;
-    width: 71px;
-    height: 96px;
+    width: 100px;
+    height: 200px;
     border-radius: 8px;
     margin-right: 20%;
 }
@@ -46,52 +46,33 @@ img {
     border-radius: 8px;
 }
 
-.claseCarta {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%; /* Ajusta el tamaño de las imágenes */
-    height: auto; /* Mantiene la proporción de las imágenes */
-    transform: translateY(calc(var(--index) * 20px)); /* Ajusta la distancia entre imágenes */
-    z-index: var(--index); /* Controla la superposición de las imágenes */
+.pilaJugable {
+    position: relative;
+    height: 1000px;
+    width: 150px;
 }
 
 #tableroInf {
-    display: grid;
-    grid-template-columns: repeat(7,1fr);
-    gap: 10px;
-    
-}
-
-.prueba {
-    border: 5px solid red;
-}
-
-.pilaJugable {
-    border: 5px solid blue;
-    position: relative;
-    height: 700px;
+  display: grid;
+  grid-template-columns: repeat(7,1fr);
+  gap: 0%;
+  margin-left: 5%;
+  margin-right: 5%;
 }
 
 .claseCartaGanada {
   position: absolute;
 }
 
-.stack-container {
-    position: relative;
-    width: 200px; /* Ajusta el ancho según el tamaño de las imágenes */
-    height: 300px; /* Ajusta la altura según el tamaño de las imágenes */
-  }
-   
-  .stacked-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%; /* Ajusta el tamaño de las imágenes */
-    height: auto; /* Mantiene la proporción de las imágenes */
-    transform: translateY(calc(var(--index) * 20px)); /* Ajusta la distancia entre imágenes */
-    z-index: var(--index); /* Controla la superposición de las imágenes */
-  }
+.claseCarta {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%; /* Ajusta el tamaño de las imágenes */
+  height: auto; /* Mantiene la proporción de las imágenes */
+  transform: translateY(calc(var(--index) * 50px)); /* Ajusta la distancia entre imágenes */
+  z-index: var(--index); /* Controla la superposición de las imágenes */
+}
    
   .claseCarta:nth-child(1) {
     --index: 1;
