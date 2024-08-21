@@ -1,22 +1,57 @@
-.juego-body {
-  background-color: rgb(20, 230, 30);
+@import url('https://fonts.googleapis.com/css2?family=Contrail+One&display=swap');
+
+body{
+  margin: 0;
 }
+
+#titulo {
+  background-color: rgb(0, 0, 39);
+  margin: 0;
+  padding-left: 5%;
+  padding-right: 5%;
+  color: white;
+  display: flex;
+  align-items: center;
+  font-family: 'Contrail One', sans-serif;
+  justify-content: space-between;
+  font-size: 40px;
+}
+
+#tituloTexto {
+  margin: 0;
+}
+
+#tituloTexto p{
+  margin: 0;
+}
+
+#titulo p {
+  order: 1;
+}
+
+#nombre-jugador-display {
+  font-size: 30px;
+}
+
+#titulo img{
+  height: 7%;
+  width: 7%;
+  order: 2;
+}
+
+#tablero {
+  background-image: url(/img/9259344.jpg);
+  padding:2%;
+}
+
 #tableroSup {
     display:flex;
     margin-bottom: 2%;
 }
 
 
-.inicio-container {
-  background-color: #fff;
-  padding: 30px;
-  border-radius: 10px;
-  text-align: center;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-  width: 300px;
-}
-
 h1 {
+  margin-top: 0;
   margin-bottom: 20px;
 }
 
@@ -44,27 +79,36 @@ button {
 button:hover {
   background-color: #0056b3;
 }
+
+#tableroSup img {
+    width: 110px;
+    height: 145px;
+}
+
 .pilaInicial{
     margin-right: 1%;
     margin-bottom: 0%;
     padding: 0%;
-    width: 100px;
-    height: 200px;
+    width: 110px;
+    height: 145px;
     border-radius: 8px;
     position: relative;
 }
 
 .pilaInicial img {
     position: absolute;
+    margin: 0;
+    padding: 0;
 }
 
 .pilaRobo {
     border: 3px solid black;
-    width: 100px;
-    height: 200px;
+    width: 110px;
+    height: 145px;
     border-radius: 8px;
     margin-right: 20%;
 }
+
 
 .pilaRobo img {
     position: absolute;
@@ -72,13 +116,15 @@ button:hover {
 
 .pilaGanada {
     border: 3px solid black;
-    width: 80px;
-    height: 96px;
+    width: 110px;
+    height: 145px;
     position: relative;
+    border-radius: 8px;
+    margin-right: 10px;
 }
 
 
-img {
+#tablero img {
     border: 3px solid black;
     border-radius: 8px;
 }
@@ -86,15 +132,15 @@ img {
 .pilaJugable {
     position: relative;
     height: 1000px;
-    width: 150px;
+    width: 100px;
 }
 
 #tableroInf {
   display: grid;
   grid-template-columns: repeat(7,1fr);
   gap: 0%;
-  margin-left: 5%;
-  margin-right: 5%;
+  margin-left: 20%;
+  margin-right: 20%;
 }
 
 .claseCartaGanada {
