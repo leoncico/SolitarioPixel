@@ -1,0 +1,24 @@
+body {
+    background-image: url('img/fondo.PNG');
+    background-size: cover;        
+    background-position: center;  
+    background-repeat: no-repeat; 
+    margin: 0;                     
+    font-family: Arial, sans-serif; 
+    height: 100vh;               
+    overflow: hidden;       
+    display: flex;                /* Activa el uso de flexbox en el body */
+    justify-content: center;      /* Centra horizontalmente el contenido */
+    align-items: flex-end;        /* Alinea el contenido al final del contenedor (parte inferior) */
+}
+
+.inicio-container {
+ 
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    margin-bottom: 40px;           /* Espacio adicional desde el borde inferior */
+}

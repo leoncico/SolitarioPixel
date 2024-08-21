@@ -369,3 +369,9 @@ $(document).ready(function() {
     let solitario = new Solitario();
     solitario.iniciarJuego();
 });
+window.onload = function() {
+    const nombreJugador = localStorage.getItem('nombreJugador');
+    if (nombreJugador) {
+        document.getElementById('nombre-jugador-display').textContent = `Jugador: ${nombreJugador}`;
+    }
+};

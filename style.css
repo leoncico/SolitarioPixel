@@ -1,18 +1,55 @@
-body {
-    background-color:rgb(95, 114, 138);
+.juego-body {
+  background-color: rgb(20, 230, 30);
 }
-
 #tableroSup {
     display:flex;
     margin-bottom: 2%;
 }
 
+
+.inicio-container {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  width: 300px;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+input {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button {
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
 .pilaInicial{
     margin-right: 1%;
     margin-bottom: 0%;
     padding: 0%;
-    width: 71px;
-    height: 96px;
+    width: 100px;
+    height: 200px;
     border-radius: 8px;
     position: relative;
 }
@@ -68,10 +105,10 @@ img {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%; /* Ajusta el tamaño de las imágenes */
-  height: auto; /* Mantiene la proporción de las imágenes */
-  transform: translateY(calc(var(--index) * 50px)); /* Ajusta la distancia entre imágenes */
-  z-index: var(--index); /* Controla la superposición de las imágenes */
+  width: 100%; 
+  height: auto; 
+  transform: translateY(calc(var(--index) * 50px));
+  z-index: var(--index); 
 }
    
   .claseCarta:nth-child(1) {
